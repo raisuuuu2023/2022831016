@@ -3,6 +3,9 @@
 #include <stdbool.h>
 #include <math.h>
 
+#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 600
+
 void drawCircle(SDL_Renderer *renderer, int centerX, int centerY, int radius, SDL_Color color) {
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
     for (int w = 0; w < radius * 2; w++) {
@@ -24,13 +27,12 @@ bool checkCollision(int x1, int y1, int x2, int y2, int radius1, int radius2) {
 }
 
 int main(int argc, char* args[]) {
-    
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         printf("SDL_Init Error: %s\n", SDL_GetError());
         return 1;
     }
 
-    SDL_Window* window = SDL_CreateWindow("Colliding Circles", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600, SDL_WINDOW_SHOWN);
+    SDL_Window* window = SDL_CreateWindow("Collision Detection", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
     if (window == NULL) {
         printf("SDL_CreateWindow Error: %s\n", SDL_GetError());
         SDL_Quit();
@@ -48,26 +50,23 @@ int main(int argc, char* args[]) {
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); 
     SDL_RenderClear(renderer);
 
-    int centerY1 = 300; 
-    int centerY2 = 0;  
-    int radius = 50;    
-    int centerX1 = 200; 
-    int centerX2 = 400; 
-
+    int radius = 30;    
+    int centerY1 = WINDOW_HEIGHT / 2; 
+    int centerY2 = radius;   
+    int centerX1 = radius;
+    int centerX2 = WINDOW_WIDTH / 2; 
 
     SDL_Color color1 = {255, 105, 180, 255}; 
     SDL_Color color2 = {0, 0, 255, 255};     
-    bool collided = false; 
 
-    int quit = 0;
+    bool quit = false;
+    bool collision = false;
     SDL_Event e;
     while (!quit) {
         while (SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_QUIT) {
-                quit = 1;
-            }
-
-            else if (e.type == SDL_KEYDOWN) {
+                quit = true;
+            } else if (e.type == SDL_KEYDOWN) {
                 switch (e.key.keysym.sym) {
                     case SDLK_UP:
                         centerY2 -= 10; 
@@ -88,25 +87,21 @@ int main(int argc, char* args[]) {
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); 
         SDL_RenderClear(renderer);
 
-        bool collision = checkCollision(centerX1, centerY1, centerX2, centerY2, radius, radius);
-
         drawCircle(renderer, centerX1, centerY1, radius, color1); 
+        drawCircle(renderer, centerX2, centerY2, radius, color2); 
 
-        if (collision && !collided) {
+        collision = checkCollision(centerX1, centerY1, centerX2, centerY2, radius, radius);
+
+        if (collision) {
             color2.r = 255; 
             color2.g = 0;
             color2.b = 0;
-            radius += 10; 
-            collided = true; 
-        } else if (!collision && collided) {
-    
+        } else {
+
             color2.r = 0; 
             color2.g = 0;
             color2.b = 255;
-            radius = 50; 
-            collided = false; 
         }
-        drawCircle(renderer, centerX2, centerY2, radius, color2); 
 
         SDL_RenderPresent(renderer);
 

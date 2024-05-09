@@ -1,12 +1,13 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 void drawCircle(SDL_Renderer *renderer, int centerX, int centerY, int radius) {
-    SDL_SetRenderDrawColor(renderer, 255, 105, 180, 255); 
+    SDL_SetRenderDrawColor(renderer, 255, 105, 180, 255); // Pink color
     for (int w = 0; w < radius * 2; w++) {
         for (int h = 0; h < radius * 2; h++) {
-            int dx = radius - w; 
-            int dy = radius - h; 
+            int dx = radius - w; // horizontal offset
+            int dy = radius - h; // vertical offset
             if ((dx*dx + dy*dy) <= (radius * radius)) {
                 SDL_RenderDrawPoint(renderer, centerX + dx, centerY + dy);
             }
@@ -15,13 +16,12 @@ void drawCircle(SDL_Renderer *renderer, int centerX, int centerY, int radius) {
 }
 
 int main(int argc, char* args[]) {
-
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         printf("SDL_Init Error: %s\n", SDL_GetError());
         return 1;
     }
 
-    SDL_Window* window = SDL_CreateWindow("Pink Circle", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600, SDL_WINDOW_SHOWN);
+    SDL_Window* window = SDL_CreateWindow("Growing Circle", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600, SDL_WINDOW_SHOWN);
     if (window == NULL) {
         printf("SDL_CreateWindow Error: %s\n", SDL_GetError());
         SDL_Quit();
@@ -39,12 +39,11 @@ int main(int argc, char* args[]) {
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); 
     SDL_RenderClear(renderer);
 
-    int centerX = 400; 
     int centerY = 300; 
-    int initialRadius = 100; 
-    int radius = initialRadius; 
+    int radius = 50;    
+    int centerX = 400 - radius; 
 
-
+    bool growing = true;
     int quit = 0;
     SDL_Event e;
     while (!quit) {
@@ -55,20 +54,28 @@ int main(int argc, char* args[]) {
         }
 
 
-        radius++;
-        if (radius > initialRadius * 2) {
-            radius = initialRadius;
-        }
-
-
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); 
         SDL_RenderClear(renderer);
 
         drawCircle(renderer, centerX, centerY, radius);
 
         SDL_RenderPresent(renderer);
 
-        SDL_Delay(40);
+        if (growing) {
+            radius++;
+            if (centerX + radius >= 800 || centerY + radius >= 600) {
+                growing = false;
+                radius = 50; 
+            }
+        } else {
+            radius--;
+            if (radius <= 0) {
+                growing = true;
+                radius = 1; 
+            }
+        }
+
+        SDL_Delay(10);
     }
 
     SDL_DestroyRenderer(renderer);
@@ -77,4 +84,3 @@ int main(int argc, char* args[]) {
 
     return 0;
 }
-
