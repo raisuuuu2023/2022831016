@@ -4,8 +4,8 @@
 #include <math.h>
 
 // Function to draw a circle
-void drawCircle(SDL_Renderer *renderer, int centerX, int centerY, int radius, SDL_Color color) {
-    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+void drawCircle(SDL_Renderer *renderer, int centerX, int centerY, int radius) {
+    SDL_SetRenderDrawColor(renderer, 255, 105, 180, 255); // Pink color
     for (int w = 0; w < radius * 2; w++) {
         for (int h = 0; h < radius * 2; h++) {
             int dx = radius - w; // horizontal offset
@@ -60,11 +60,6 @@ int main(int argc, char* args[]) {
     int centerX1 = 200; // X-coordinate of the first circle's center
     int centerX2 = 400; // X-coordinate of the second circle's center
 
-    // Color for the circles
-    SDL_Color color1 = {255, 105, 180, 255}; // Pink color for the first circle
-    SDL_Color color2 = {0, 0, 255, 255};     // Blue color for the second circle
-    bool collided = false; // Flag to track collision state
-
     // Main loop
     int quit = 0;
     SDL_Event e;
@@ -100,24 +95,14 @@ int main(int argc, char* args[]) {
         bool collision = checkCollision(centerX1, centerY1, centerX2, centerY2, radius, radius);
 
         // Draw the circles
-        drawCircle(renderer, centerX1, centerY1, radius, color1); // First circle
+        drawCircle(renderer, centerX1, centerY1, radius); // First circle
+        drawCircle(renderer, centerX2, centerY2, radius); // Second circle
 
-        // If collision detected, change color and increase size of the second circle
-        if (collision && !collided) {
-            color2.r = 255; // Change color to red
-            color2.g = 0;
-            color2.b = 0;
-            radius += 10; // Increase radius temporarily
-            collided = true; // Set collided flag
-        } else if (!collision && collided) {
-            // Reset color and size of the second circle
-            color2.r = 0; // Reset color to blue
-            color2.g = 0;
-            color2.b = 255;
-            radius = 50; // Reset radius
-            collided = false; // Reset collided flag
+        // If collision detected, change color of the second circle
+        if (collision) {
+            SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Red color
+            drawCircle(renderer, centerX2, centerY2, radius); // Draw the second circle with red color
         }
-        drawCircle(renderer, centerX2, centerY2, radius, color2); // Second circle
 
         // Render the circles
         SDL_RenderPresent(renderer);
@@ -133,7 +118,3 @@ int main(int argc, char* args[]) {
 
     return 0;
 }
-
-
-
-
