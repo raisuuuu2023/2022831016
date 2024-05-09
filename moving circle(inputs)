@@ -1,7 +1,6 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
 
-// Function to draw a circle
 void drawCircle(SDL_Renderer *renderer, int centerX, int centerY, int radius) {
     SDL_SetRenderDrawColor(renderer, 255, 105, 180, 255); // Pink color
     for (int w = 0; w < radius * 2; w++) {
@@ -16,13 +15,11 @@ void drawCircle(SDL_Renderer *renderer, int centerX, int centerY, int radius) {
 }
 
 int main(int argc, char* args[]) {
-    // Initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         printf("SDL_Init Error: %s\n", SDL_GetError());
         return 1;
     }
 
-    // Create a window
     SDL_Window* window = SDL_CreateWindow("Moving Circles", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600, SDL_WINDOW_SHOWN);
     if (window == NULL) {
         printf("SDL_CreateWindow Error: %s\n", SDL_GetError());
@@ -30,7 +27,6 @@ int main(int argc, char* args[]) {
         return 1;
     }
 
-    // Create a renderer
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (renderer == NULL) {
         SDL_DestroyWindow(window);
@@ -39,18 +35,15 @@ int main(int argc, char* args[]) {
         return 1;
     }
 
-    // Clear the window
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // White color
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); 
     SDL_RenderClear(renderer);
 
-    // Initial values for the circles
-    int centerY1 = 300; // Y-coordinate of the first circle's center
-    int centerY2 = 0;   // Y-coordinate of the second circle's center
-    int radius = 50;    // Radius of the circles
-    int centerX1 = 200; // X-coordinate of the first circle's center
-    int centerX2 = 400; // X-coordinate of the second circle's center
+    int centerY1 = 300; 
+    int centerY2 = 0;   
+    int radius = 50;    
+    int centerX1 = 200; 
+    int centerX2 = 400; 
 
-    // Main loop
     int quit = 0;
     SDL_Event e;
     while (!quit) {
@@ -58,20 +51,19 @@ int main(int argc, char* args[]) {
             if (e.type == SDL_QUIT) {
                 quit = 1;
             }
-            // Handle keyboard events
             else if (e.type == SDL_KEYDOWN) {
                 switch (e.key.keysym.sym) {
                     case SDLK_UP:
-                        centerY2 -= 10; // Move the second circle up
+                        centerY2 -= 10; 
                         break;
                     case SDLK_DOWN:
-                        centerY2 += 10; // Move the second circle down
+                        centerY2 += 10; 
                         break;
                     case SDLK_LEFT:
-                        centerX2 -= 10; // Move the second circle left
+                        centerX2 -= 10; 
                         break;
                     case SDLK_RIGHT:
-                        centerX2 += 10; // Move the second circle right
+                        centerX2 += 10; 
                         break;
                 }
             }
